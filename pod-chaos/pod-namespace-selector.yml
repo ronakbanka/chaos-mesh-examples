@@ -26,16 +26,23 @@ spec:
         name: nginx
 
 ---
+kind: Schedule
 apiVersion: chaos-mesh.org/v1alpha1
-kind: PodChaos
 metadata:
-  name: pod-kill-example
-  namespace: chaos-testing
+  namespace: appns
+  name: podkill
 spec:
-  action: pod-kill
-  mode: one
-  selector:
-    namespaces:
-      - appns
-  scheduler:
-    cron: "@every 1m"
+  schedule: '* * * * *'
+  startingDeadlineSeconds: null
+  concurrencyPolicy: Forbid
+  historyLimit: 1
+  type: PodChaos
+  podChaos:
+    selector:
+      namespaces:
+        - appns
+      labelSelectors:
+        app: nginx
+    mode: all
+    action: pod-kill
+    duration: 1m
